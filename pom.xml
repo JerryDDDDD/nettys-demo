@@ -33,6 +33,13 @@
             <artifactId>commons-lang3</artifactId>
         </dependency>
 
+        <!--netty相关-->
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
+            <version>4.1.34.Final</version>
+        </dependency>
+
         <!--freemarker 模板引擎-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
