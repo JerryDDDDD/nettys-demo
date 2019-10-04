@@ -38,16 +38,19 @@ public class MyHandler extends SimpleChannelInboundHandler<TextWebSocketFrame> {
         }
     }
 
-    /**
-     * @Author 叶泽文
-     * @Description 新建连接时触发执行
-     * @Date 15:33 2019/9/10
-     * @Param [ctx]
-     * @return void
-     **/
-    @Override
-    public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
-        CacheChannel.clients.add(ctx);
-    }
+
+
+
+//    /**
+//     * @Author 叶泽文
+//     * @Description 新建连接时触发执行
+//     * @Date 15:33 2019/9/10
+//     * @Param [ctx]
+//     * @return void
+//     **/
+//    @Override
+//    public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
+//        CacheChannel.clients.add(ctx);
+//    }
 
 }

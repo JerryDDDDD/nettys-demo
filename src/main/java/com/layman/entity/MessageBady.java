@@ -9,11 +9,21 @@ package com.layman.entity;
  **/
 public class MessageBady {
 
+    private String messageType;
+
     private String fromChannel;
 
     private String toChannel;
 
     private Object message;
+
+    public String getMessageType() {
+        return messageType;
+    }
+
+    public void setMessageType(String messageType) {
+        this.messageType = messageType;
+    }
 
     public String getFromChannel() {
         return fromChannel;
