@@ -1,12 +1,17 @@
 package com.layman.handler;
 
-import com.layman.entity.CacheChannel;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.layman.entity.*;
+import com.layman.utils.JsonUtils;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.StringRedisTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +27,15 @@ public class MyHandler extends SimpleChannelInboundHandler<TextWebSocketFrame> {
 
     Logger logger = LoggerFactory.getLogger(MyHandler.class.getName());
 
+    @Autowired
+    private StringRedisTemplate redisTemplate;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @Value("${RedisMessageSend}")
+    private String redisSendTopic;
+
     @Override
     public boolean acceptInboundMessage(Object msg) throws Exception {
 
@@ -33,24 +47,71 @@ public class MyHandler extends SimpleChannelInboundHandler<TextWebSocketFrame> {
         // 1. 获取客户端Channel
         Channel currentChannel = ctx.channel();
         logger.info("socket message =======>" + msg.text());
-        for (ChannelHandlerContext client : CacheChannel.clients) {
-            client.writeAndFlush(new TextWebSocketFrame("return for ==>" + msg.text()));
+        // 1. 解析msg
+        CustomerMessage customerMessage = parseMsg(msg);
+        Object message = customerMessage.getMessage();
+        // 如果消息类型或者消息内容为空 退出处理
+        if (customerMessage.getMessageType() == null || message == null) {
+            return;
+        }
+        // 如果为初始化消息
+        if (customerMessage.getMessageType() == MessageType.INIT) {
+            cacheChannel(ctx, objectMapper.convertValue(message, InitMessage.class));
+        } else {
+            redisMessageSend(objectMapper.convertValue(message, CpwMessage.class));
+        }
+    }
+
+    private void cacheChannel(ChannelHandlerContext ctx, InitMessage msg) {
+        // 前台系统用户
+        switch (msg.getUserType()) {
+            case CustomerUserType.user: {
+                System.out.println(msg.getUserId());
+                System.out.println(ctx);
+                CacheChannel.userChannelMap.put(msg.getUserId(), ctx);
+                break;
+            }
+            // 公司用户
+            case CustomerUserType.company: {
+                CacheChannel.companyChannelMap.put(msg.getUserId(), ctx);
+                break;
+            }
+            // 平台后台用户
+            case CustomerUserType.admin: {
+                CacheChannel.adminChannelMap.put(msg.getUserId(), ctx);
+                break;
+            }
+            default:
+                break;
         }
     }
 
 
+    /**
+     * @return com.cpw.customer.entity.CustomerMessage
+     * @Author 叶泽文
+     * @Description 消息解析
+     * @Date 17:12 2019/9/18
+     * @Param [msg]
+     **/
+    private static CustomerMessage parseMsg(TextWebSocketFrame msg) {
+        //获取客户端传输过来的消息
+        String content = msg.text();
 
+        CustomerMessage customerMessage = JsonUtils.jsonToPojo(content, CustomerMessage.class);
 
-//    /**
-//     * @Author 叶泽文
-//     * @Description 新建连接时触发执行
-//     * @Date 15:33 2019/9/10
-//     * @Param [ctx]
-//     * @return void
-//     **/
-//    @Override
-//    public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
-//        CacheChannel.clients.add(ctx);
-//    }
+        return customerMessage;
+    }
 
+    /**    
+     * @Author 叶泽文
+     * @Description Redis消息发送
+     * @Date 9:21 2019/10/5
+     * @Param []
+     * @return void
+     **/
+    
+    private void redisMessageSend(CpwMessage cpwMessage) {
+        redisTemplate.convertAndSend(redisSendTopic,JsonUtils.objectToJson(cpwMessage));
+    }
 }

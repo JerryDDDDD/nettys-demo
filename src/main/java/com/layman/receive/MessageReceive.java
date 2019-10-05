@@ -22,7 +22,5 @@ public class MessageReceive {
 
     public void receiveMessage(String message) {
         System.out.println(message);
-//        messageReceiveHandler.messagePush(message);
-        redisTemplate.opsForHash().put("111", "123", message);
     }
 }

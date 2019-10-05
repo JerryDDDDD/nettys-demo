@@ -1,6 +1,10 @@
 package com.layman.redis;
 
 import com.layman.receive.MessageReceive;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -19,13 +23,17 @@ import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 @Configuration
 public class RedisChannelConfig {
 
+    @Value("${RedisMessageSend}")
+    private String redisSendTopic;
+
+    Logger logger = LoggerFactory.getLogger(RedisChannelConfig.class.getName());
+
     @Bean
     RedisMessageListenerContainer container (RedisConnectionFactory connectionFactory, MessageListenerAdapter listenerAdapter) {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
-        container.addMessageListener(listenerAdapter, new PatternTopic("messagepush"));
-        container.addMessageListener(listenerAdapter, new PatternTopic("messagepush3"));
-        container.addMessageListener(listenerAdapter, new PatternTopic("testSend"));
+        logger.info("===========>" + redisSendTopic);
+        container.addMessageListener(listenerAdapter, new PatternTopic(redisSendTopic));
         return container;
     }
 
