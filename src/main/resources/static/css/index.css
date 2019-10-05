@@ -1,0 +1,16 @@
+.left {
+    width: 500px;
+    /*height: 600px;*/
+    border: 1px solid #000000;
+    float: left;
+    align-content: center;
+}
+
+.right {
+    width: 500px;
+    height: 600px;
+    margin-left: 100px;
+    border: 1px solid #998998;
+    float: left;
+    overflow-y:scroll;
+}

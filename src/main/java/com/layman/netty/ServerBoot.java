@@ -18,13 +18,13 @@ import org.springframework.stereotype.Component;
 public class ServerBoot implements ApplicationListener<ContextRefreshedEvent> {
 
     Logger logger = LoggerFactory.getLogger(ServerBoot.class.getName());
-
-    @Value("${netty.port}")
-    private String NETTY_PORT;
+//
+//    @Value("${netty.port}")
+//    private String NETTY_PORT;
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
-        logger.info("on application context refreshed: " + NETTY_PORT);
+//        logger.info("on application context refreshed: " + NETTY_PORT);
         NettyServer.getInstance().start();
     }
 }

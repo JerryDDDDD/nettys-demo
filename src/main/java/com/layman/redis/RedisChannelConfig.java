@@ -23,7 +23,7 @@ import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 @Configuration
 public class RedisChannelConfig {
 
-    @Value("${RedisMessageSend}")
+    @Value("${redis.message.topic}")
     private String redisSendTopic;
 
     Logger logger = LoggerFactory.getLogger(RedisChannelConfig.class.getName());

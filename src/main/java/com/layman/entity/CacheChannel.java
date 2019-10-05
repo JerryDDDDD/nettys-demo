@@ -2,9 +2,7 @@ package com.layman.entity;
 
 import io.netty.channel.ChannelHandlerContext;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -21,11 +19,11 @@ public class CacheChannel {
 
 
     // 用于存储公司信道的map
-    public static HashMap<String, ChannelHandlerContext> companyChannelMap = new HashMap<>();
+    public static Map<String, ChannelHandlerContext> companyChannelMap = new HashMap<>();
 
     // 用于存储前台用户信道的map
-    public static HashMap<String, ChannelHandlerContext> userChannelMap = new HashMap<>();
+    public static Map<String, ChannelHandlerContext> userChannelMap = new HashMap<>();
 
     // 用于存储平台后台的map
-    public static HashMap<String, ChannelHandlerContext> adminChannelMap = new HashMap<>();
+    public static Map<String, ChannelHandlerContext> adminChannelMap = new HashMap<>();
 }
