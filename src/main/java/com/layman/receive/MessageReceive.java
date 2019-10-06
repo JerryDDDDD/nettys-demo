@@ -5,6 +5,7 @@ import com.layman.entity.CpwMessage;
 import com.layman.entity.CustomerUserType;
 import com.layman.utils.JsonUtils;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -63,14 +64,15 @@ public class MessageReceive {
             Iterator iterator = map.values().iterator();
             while (iterator.hasNext()) {
                 ChannelHandlerContext channelHandlerContext = (ChannelHandlerContext) iterator.next();
-                channelHandlerContext.channel().writeAndFlush(cpwMessage);
+                channelHandlerContext.channel().writeAndFlush(new TextWebSocketFrame(JsonUtils.objectToJson(cpwMessage)));
             }
         } else {
             // 单发
             ChannelHandlerContext channelHandlerContext = (ChannelHandlerContext) map.get(toId);
             // 判断这个单发的信道是否在自己服务器中
             if (channelHandlerContext != null) {
-                channelHandlerContext.channel().writeAndFlush(cpwMessage);
+                System.out.println(channelHandlerContext.channel().isActive());
+                channelHandlerContext.channel().writeAndFlush(new TextWebSocketFrame(JsonUtils.objectToJson(cpwMessage)));
             }
         }
     }

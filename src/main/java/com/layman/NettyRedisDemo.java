@@ -1,7 +1,9 @@
 package com.layman;
 
+import com.layman.utils.ContextUtils;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ConfigurableApplicationContext;
 
 /**
  * @ClassName NettyRedisDemo
@@ -13,6 +15,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class NettyRedisDemo {
     public static void main(String[] args) {
-        SpringApplication.run(NettyRedisDemo.class, args);
+        ConfigurableApplicationContext applicationContext = SpringApplication.run(NettyRedisDemo.class, args);
+        ContextUtils.setApplicationContext(applicationContext);
     }
 }

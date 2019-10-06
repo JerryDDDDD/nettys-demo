@@ -55,7 +55,7 @@ public class NettyServer {
      **/
     public void start() {
         logger.info("netty server start up on port: " + NETTY_PORT);
-        this.future = serverBootstrap.bind(Integer.valueOf(NETTY_PORT));
+        this.future = serverBootstrap.bind(NETTY_PORT);
     }
 
 

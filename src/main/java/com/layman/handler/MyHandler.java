@@ -2,6 +2,7 @@ package com.layman.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.layman.entity.*;
+import com.layman.redis.RedisUtil;
 import com.layman.utils.JsonUtils;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -12,9 +13,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @ClassName MyHandler
@@ -23,6 +23,7 @@ import java.util.List;
  * @Data 2019/9/9 17:05
  * @Version 3.0
  **/
+@Component
 public class MyHandler extends SimpleChannelInboundHandler<TextWebSocketFrame> {
 
     Logger logger = LoggerFactory.getLogger(MyHandler.class.getName());
@@ -33,7 +34,7 @@ public class MyHandler extends SimpleChannelInboundHandler<TextWebSocketFrame> {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @Value("${RedisMessageSend}")
+    @Value("${redis.message.topic}")
     private String redisSendTopic;
 
     @Override
@@ -56,9 +57,14 @@ public class MyHandler extends SimpleChannelInboundHandler<TextWebSocketFrame> {
         }
         // 如果为初始化消息
         if (customerMessage.getMessageType() == MessageType.INIT) {
-            cacheChannel(ctx, objectMapper.convertValue(message, InitMessage.class));
+            String messageJson = JsonUtils.objectToJson(message);
+            InitMessage initMessage = JsonUtils.jsonToPojo(messageJson, InitMessage.class);
+            cacheChannel(ctx, initMessage);
         } else {
-            redisMessageSend(objectMapper.convertValue(message, CpwMessage.class));
+            String messageJson = JsonUtils.objectToJson(message);
+            CpwMessage cpwMessage = JsonUtils.jsonToPojo(messageJson, CpwMessage.class);
+            RedisUtil redisUtil = new RedisUtil();
+            redisUtil.redisMessageSend(cpwMessage);
         }
     }
 
@@ -111,7 +117,5 @@ public class MyHandler extends SimpleChannelInboundHandler<TextWebSocketFrame> {
      * @return void
      **/
     
-    private void redisMessageSend(CpwMessage cpwMessage) {
-        redisTemplate.convertAndSend(redisSendTopic,JsonUtils.objectToJson(cpwMessage));
-    }
+
 }
