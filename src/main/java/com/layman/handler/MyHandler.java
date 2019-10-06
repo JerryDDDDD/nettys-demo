@@ -68,6 +68,11 @@ public class MyHandler extends SimpleChannelInboundHandler<TextWebSocketFrame> {
         }
     }
 
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        ctx.close();
+    }
+
     private void cacheChannel(ChannelHandlerContext ctx, InitMessage msg) {
         // 前台系统用户
         switch (msg.getUserType()) {
@@ -108,14 +113,5 @@ public class MyHandler extends SimpleChannelInboundHandler<TextWebSocketFrame> {
 
         return customerMessage;
     }
-
-    /**    
-     * @Author 叶泽文
-     * @Description Redis消息发送
-     * @Date 9:21 2019/10/5
-     * @Param []
-     * @return void
-     **/
-    
 
 }
