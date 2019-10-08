@@ -41,6 +41,11 @@ $("#sendMessage").on('click', function () {
     CustomerServer.socket.send(JSON.stringify(message));
 });
 
+// 清空内容
+$("#clear").on('click', function () {
+    $(".right").empty();
+});
+
 function receiveMessage(message) {
     var html = "<p>" + message + "</p>";
     $(".right").append(html);

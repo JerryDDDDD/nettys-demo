@@ -25,7 +25,6 @@ public class RedisUtil {
 //    private String redisSendTopic;
 
     public void redisMessageSend(CpwMessage cpwMessage) {
-        String s = JsonUtils.objectToJson(cpwMessage);
         stringRedisTemplate.convertAndSend(redisSendTopic,JsonUtils.objectToJson(cpwMessage));
     }
 }

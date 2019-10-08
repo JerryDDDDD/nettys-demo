@@ -58,6 +58,9 @@
 </div>
 <div class="right">
 </div>
+<div>
+    <button id="clear">清空内容</button>
+</div>
 </body>
 </html>
 
